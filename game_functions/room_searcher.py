@@ -1,10 +1,13 @@
 from socket import *
 
+from termcolor import colored
+
 
 def activate_server():  # UDP client
     serverPort = 13117
     serverSocket = socket(AF_INET, SOCK_DGRAM)
     serverSocket.bind(('', serverPort))
+    print(colored("Client started, listening for offer requests...", "yellow"))
     # serverSocket.settimeout(100000) #10 minutes
     while 1:
         message, ip_port_tup = serverSocket.recvfrom(1024)  # buffer size

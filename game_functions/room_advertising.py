@@ -1,8 +1,11 @@
+# sender
+# class UDP_server:
 from socket import *
 
-#sender
-# class UDP_server:
-def activate_server():
+from termcolor import colored
+
+
+def activate_server(ip_address):
     serverPort = 12000
     clientSocket = socket(AF_INET, SOCK_DGRAM)
     clientSocket.bind(('', serverPort))
@@ -13,4 +16,6 @@ def activate_server():
     magic_cookie = '0xfeedbeef'
     message_type = '0x2'
     TCP_port = '2112'
-    clientSocket.sendto(bytes(magic_cookie + message_type + TCP_port,'utf-8'), (broadcast_address,clients_listening_port))
+    print(colored("Server started,listening on IP address ", 'blue') + colored(ip_address, 'red'))
+    clientSocket.sendto(bytes(magic_cookie + message_type + TCP_port, 'utf-8'),
+                        (broadcast_address, clients_listening_port))
