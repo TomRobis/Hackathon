@@ -14,11 +14,17 @@ def activate_server(server_addr):
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect(server_addr)
     clientSocket.send(team_name.encode())
-    welcome_msg = clientSocket.recv(1024)
+    try:
+        welcome_msg = clientSocket.recv(1024)
+    except ConnectionResetError:
+        print('Damn server hung up on us!')
+        clientSocket.close()
+        return
     print(welcome_msg.decode())
     boli = Boolen()
     keyboard = Virtual_keyboard(clientSocket)
     threading.Thread(target=keyboard.listen, args=(boli,)).start()
-    time.sleep(5)
+    end_game_msg = clientSocket.recv(1024)
     boli.set()
+    print(end_game_msg.decode())
     clientSocket.close()

@@ -18,6 +18,7 @@ class player_handler:
         self.room_assignment(team_name)
         event.wait()
         self.play_game(player_socket, team_name)
+        player_socket.send(self.game_summrize().encode())
         print("Game over, sending out offer requests...")
         player_socket.close()
 
@@ -26,6 +27,7 @@ class player_handler:
         future = time.time() + 10
         while time.time() < future:  # time out
             try:
+                player_socket.settimeout(future - time.time())
                 key = player_socket.recv(1024).decode()
                 if key != "":
                     if team_name in self.group_1:
@@ -36,9 +38,10 @@ class player_handler:
                         self.mutex_group2.acquire()
                         self.char_counter_group2 += 1
                         self.mutex_group2.release()
-            except:
-                print('some error identification we need to implement later')  # todo
-        self.game_summrize()
+            except OSError:
+                print('Time has run out!')  # todo remove before submission
+            except AttributeError:
+                continue
 
     def room_assignment(self, team_name):
         if self.group_decider:
@@ -58,16 +61,15 @@ class player_handler:
         message += "Start pressing keys on your keyboard as fast as you can!!"
         return message
 
-    def game_summrize(self, socket):
-        to_send = "Game over!\nGroup 1 typed in " + self.char_counter_group1 + " characters. Group 2 typed in " + \
-        self.char_counter_group2 + " characters.\n"
+    def game_summrize(self):
+        to_send = "Game over!\nGroup 1 typed in " + str(self.char_counter_group1) + " characters. Group 2 typed in " + \
+                  str(self.char_counter_group2) + " characters.\n"
         if self.char_counter_group1 > self.char_counter_group2:
             to_send += "Group 1 wins!\n\nCongratulations to the winners:\n==\n"
             for team in self.group_1:
-                to_send+= team + "\n"
+                to_send += team + "\n"
         else:
             to_send += "Group 2 wins!\n\nCongratulations to the winners:\n==\n"
             for team in self.group_2:
                 to_send += team + "\n"
-        socket.send(to_send)
-
+        return to_send
