@@ -22,9 +22,7 @@ def activate_server():
             connectionSocket, addr = serverSocket.accept()
             threading.Thread(target=p_handler.handle_client, args=(connectionSocket, event)).start()
         except:
-            print('recieve window is closed')
             break
     event.set()
     event.clear()
-    print('mefanek kaze, print tov')
     serverSocket.close()

@@ -1,7 +1,12 @@
+import threading
+import time
 from socket import *
 
 from termcolor import colored
-from pynput.keyboard import Listener
+
+from game_functions.Boolen import Boolen
+from game_functions.virtual_keyboard import Virtual_keyboard
+
 
 def activate_server(server_addr):
     print(colored("Received offer from " + server_addr[0] + " , attempting to connect...", "blue"))
@@ -11,9 +16,9 @@ def activate_server(server_addr):
     clientSocket.send(team_name.encode())
     welcome_msg = clientSocket.recv(1024)
     print(welcome_msg.decode())
-    # keyboard = virtual_keyboard.listen()
-    while True:
-        pass
-        # with Listener(on_press=on_press,on_release=on_release) as listener:
-        # clientSocket.send(keyboard.(Key.space).encode())
+    boli = Boolen()
+    keyboard = Virtual_keyboard(clientSocket)
+    threading.Thread(target=keyboard.listen, args=(boli,)).start()
+    time.sleep(5)
+    boli.set()
     clientSocket.close()
