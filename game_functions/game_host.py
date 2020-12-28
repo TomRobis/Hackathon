@@ -1,3 +1,4 @@
+import threading
 from concurrent.futures.thread import ThreadPoolExecutor
 from socket import *
 from threading import Thread
@@ -7,6 +8,7 @@ import time
 
 
 def activate_server():
+    event = threading.Event()
     serverPort = 2112
     serverSocket = socket(AF_INET, SOCK_STREAM)
     serverSocket.bind(('', serverPort))
@@ -14,16 +16,14 @@ def activate_server():
 
     p_handler = player_handler.player_handler()
     future = time.time() + 10
-    num_of_threads = 5
-    executor = ThreadPoolExecutor(num_of_threads)
     while time.time() < future:  # time out
         try:
-            serverSocket.settimeout(future - time.time()) # time left
+            serverSocket.settimeout(future - time.time())  # time left
             connectionSocket, addr = serverSocket.accept()
-            executor.submit(p_handler.handle_client(connectionSocket))
+            threading.Thread(target=p_handler.handle_client, args=(connectionSocket, event)).start()
         except:
             print('recieve window is closed')
             break
-    executor.shutdown()  # finish dividing into teams
+    event.set()
     print('mefanek kaze, print tov')
     serverSocket.close()
