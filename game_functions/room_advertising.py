@@ -1,5 +1,6 @@
 # sender
 # class UDP_server:
+import time
 from socket import *
 
 from termcolor import colored
@@ -17,5 +18,8 @@ def activate_server(ip_address):
     message_type = '0x2'
     TCP_port = '2112'
     print(colored("Server started,listening on IP address ", 'blue') + colored(ip_address, 'red'))
-    clientSocket.sendto(bytes(magic_cookie + message_type + TCP_port, 'utf-8'),
-                        (broadcast_address, clients_listening_port))
+    future = time.time() + 10
+    while future > time.time():
+        clientSocket.sendto(bytes(magic_cookie + message_type + TCP_port, 'utf-8'),
+                            (broadcast_address, clients_listening_port))
+        time.sleep(1)

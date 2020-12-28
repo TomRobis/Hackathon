@@ -18,6 +18,7 @@ class player_handler:
         self.room_assignment(team_name)
         event.wait()
         self.play_game(player_socket, team_name)
+        print("Game over, sending out offer requests...")
         player_socket.close()
 
     def play_game(self, player_socket, team_name):
@@ -56,7 +57,17 @@ class player_handler:
             message += g + "\n"
         message += "Start pressing keys on your keyboard as fast as you can!!"
         return message
-#
-#     def game_summrize(self, socket):
-#         to_send = "Game over!\nGroup 1 typed in " + 104 + " characters. Group 2 typed in 28 characters.
-# Group 1 wins!"
+
+    def game_summrize(self, socket):
+        to_send = "Game over!\nGroup 1 typed in " + self.char_counter_group1 + " characters. Group 2 typed in " + \
+        self.char_counter_group2 + " characters.\n"
+        if self.char_counter_group1 > self.char_counter_group2:
+            to_send += "Group 1 wins!\n\nCongratulations to the winners:\n==\n"
+            for team in self.group_1:
+                to_send+= team + "\n"
+        else:
+            to_send += "Group 2 wins!\n\nCongratulations to the winners:\n==\n"
+            for team in self.group_2:
+                to_send += team + "\n"
+        socket.send(to_send)
+
