@@ -25,5 +25,6 @@ def activate_server():
             print('recieve window is closed')
             break
     event.set()
+    event.clear()
     print('mefanek kaze, print tov')
     serverSocket.close()
