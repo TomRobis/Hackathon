@@ -38,5 +38,9 @@ def register_team_to_group(client_socket):
 def send_chars(client_socket):
     keyboard = virtual_keyboard(client_socket)
     threading.Thread(target=keyboard.listen).start()
-    end_game_msg = client_socket.recv(1024)
+    try:
+        end_game_msg = client_socket.recv(1024)
+    except ConnectionResetError:
+        print(colored("damn server hung up on us", 'red'))
+        return
     print(end_game_msg.decode())
