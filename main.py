@@ -1,6 +1,6 @@
 from threading import Thread
-from host import run_host
-from player import run_player
+from host.host import run_host
+from client.player import run_player
 from termcolor import colored
 
 

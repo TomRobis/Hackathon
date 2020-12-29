@@ -8,6 +8,7 @@ class player_handler:
         self.group_1 = set()
         self.group_2 = set()
         self.group_decider = False
+        # each counter is protected as a critical section, because it could be accessed by multiple threads.
         self.char_counter_group1 = 0
         self.char_counter_group2 = 0
         self.mutex_group1 = Lock()
@@ -15,10 +16,12 @@ class player_handler:
 
     def handle_client(self, player_socket, event):
         team_name = (player_socket.recv(1024)).decode()
-        self.room_assignment(team_name)
-        event.wait()
-        self.play_game(player_socket, team_name)
+        self.room_assignment(team_name)  # teams are assigned to groups in this phase
+        event.wait()  # every player waits for 10 seconds to end to start the game, determined by game_host.
+        self.play_game(player_socket, team_name)  # all players start to type in characters for 10 secs.
+        # we count the scores and determine the winner and then update the players.
         player_socket.send(self.game_summrize().encode())
+        # cleanup and set another game in motion
         print("Game over, sending out offer requests...")
         player_socket.close()
 
@@ -38,9 +41,9 @@ class player_handler:
                         self.mutex_group2.acquire()
                         self.char_counter_group2 += 1
                         self.mutex_group2.release()
-            except OSError:
+            except OSError:  # timeout error recieving socket
                 print('Time has run out!')  # todo remove before submission
-            except AttributeError:
+            except AttributeError: # invalid character has been entered.
                 continue
 
     def room_assignment(self, team_name):
