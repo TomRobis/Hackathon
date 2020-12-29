@@ -55,7 +55,7 @@ def listen_and_send(client_socket,end_game):
             try:
                 client_socket.send(c)
             except OSError:
-                sys.exit()
+                sys.exit() #
 
 
 
