@@ -7,6 +7,7 @@ from termcolor import colored
 def setup_udp_room_broadcaster():
     serverPort = 12000
     room_broadcaster = socket(AF_INET, SOCK_DGRAM)
+    room_broadcaster.setsockopt(SOL_SOCKET,  SO_REUSEADDR , 1)
     room_broadcaster.bind(('', serverPort))
     room_broadcaster.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
     return room_broadcaster
@@ -35,3 +36,4 @@ def broadcast_game_server_ip(ip_address):
     room_broadcaster_socket = setup_udp_room_broadcaster()
     msg = make_msg() # wrap the message with a magic cookie identifier and certain message type
     send_game_host_ip(msg, room_broadcaster_socket,ip_address)
+    room_broadcaster_socket.close()

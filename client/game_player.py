@@ -10,8 +10,7 @@ from client.virtual_keyboard import virtual_keyboard
 def play_game(server_addr):
     client_socket = connect_with_server(server_addr)
     if register_team_to_group(client_socket):
-        # send_chars(client_socket)
-        pass
+        send_chars(client_socket)
     client_socket.close()  # game over
 
 
@@ -38,5 +37,9 @@ def register_team_to_group(client_socket):
 def send_chars(client_socket):
     keyboard = virtual_keyboard(client_socket)
     threading.Thread(target=keyboard.listen).start()
-    end_game_msg = client_socket.recv(1024)
+    try:
+        end_game_msg = client_socket.recv(1024)
+    except ConnectionResetError:
+        print(colored('Damn server hung up on us!','blue'))
+        return
     print(end_game_msg.decode())
