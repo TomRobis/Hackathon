@@ -1,10 +1,12 @@
+import msvcrt
+import sys
 import threading
+import time
 from socket import *
 
 from pip._vendor.colorama import init
 from termcolor import colored
 
-from client.virtual_keyboard import virtual_keyboard
 
 
 def play_game(server_addr):
@@ -35,11 +37,25 @@ def register_team_to_group(client_socket):
 
 
 def send_chars(client_socket):
-    keyboard = virtual_keyboard(client_socket)
-    threading.Thread(target=keyboard.listen).start()
+    end_game = False
+    t1 = threading.Thread(target=listen_and_send,args=(client_socket,end_game,))
+    t1.start()
     try:
         end_game_msg = client_socket.recv(1024)
+        end_game = True
+        # print(t1.is_alive())
     except ConnectionResetError:
         print(colored('Damn server hung up on us!','blue'))
         return
     print(end_game_msg.decode())
+def listen_and_send(client_socket,end_game):
+    while(not end_game):
+        if msvcrt.kbhit():
+            c = msvcrt.getch()
+            try:
+                client_socket.send(c)
+            except OSError:
+                sys.exit()
+
+
+
