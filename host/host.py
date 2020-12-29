@@ -17,7 +17,7 @@ def run_host():
         t1.start()
         t2.start()
         t1.join()
-        # t2.join()
+        t2.join()
         print(f"{pretty_print.pretty_print.WARNING}Game over, sending out offer requests...")
 
 
