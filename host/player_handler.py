@@ -22,7 +22,6 @@ class player_handler:
         # we count the scores and determine the winner and then update the players.
         player_socket.send(self.game_summrize().encode())
         # cleanup and set another game in motion
-        print("Game over, sending out offer requests...")
         player_socket.close()
 
     def play_game(self, player_socket, team_name):
@@ -42,8 +41,8 @@ class player_handler:
                         self.char_counter_group2 += 1
                         self.mutex_group2.release()
             except OSError:  # timeout error recieving socket
-                print('Time has run out!')  # todo remove before submission
-            except AttributeError: # invalid character has been entered.
+                pass
+            except AttributeError:  # invalid character has been entered.
                 continue
 
     def room_assignment(self, team_name):

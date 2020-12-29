@@ -10,7 +10,7 @@ class virtual_keyboard:
     def on_press(self, key):
         try:
             self.send_socket.send(format(key).encode())
-        except ConnectionResetError:  # in case server hangs up before client realises
+        except OSError:  # in case server hangs up before client realises
             return False  # end listener
 
     def listen(self):

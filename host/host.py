@@ -14,4 +14,8 @@ def run_host():
         t2.start()
         t1.join()
         t2.join()
+        print("Game over, sending out offer requests...")
+
+
+
 

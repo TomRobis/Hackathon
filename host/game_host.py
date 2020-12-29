@@ -24,10 +24,12 @@ def start_game():
             server_socket.settimeout(future - time.time())
             connectionSocket, addr = server_socket.accept()
             # player handler manages the game for the game host - assigns teams to groups and supervises the game
-            threading.Thread(target=p_handler.handle_client, args=(connectionSocket, event)).start()
+            t = threading.Thread(target=p_handler.handle_client, args=(connectionSocket, event))
+            t.start()
         except OSError:
             break
     event.set() # when timeout is reached, assignment to group has ended - p_handler can start the game
     # game over, cleanup
     event.clear()
     server_socket.close()
+    t.join()

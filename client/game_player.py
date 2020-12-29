@@ -3,7 +3,6 @@ from socket import *
 
 from termcolor import colored
 
-from client.Boolen import Boolen
 from client.virtual_keyboard import virtual_keyboard
 
 
@@ -35,9 +34,9 @@ def register_team_to_group(client_socket):
 
 
 def send_chars(client_socket):
-    boli = Boolen()
+    # boli = Boolen()
     keyboard = virtual_keyboard(client_socket)
-    threading.Thread(target=keyboard.listen, args=(boli,)).start()
+    threading.Thread(target=keyboard.listen).start()
     end_game_msg = client_socket.recv(1024)
-    boli.set()
+    # boli.set()
     print(end_game_msg.decode())
