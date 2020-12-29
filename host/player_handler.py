@@ -23,7 +23,6 @@ class player_handler:
         self.play_game(player_socket, team_name)  # all players start to type in characters for 10 secs.
         # we count the scores and determine the winner and then update the players.
         self.send_msg_to_client(self.game_summrize(), player_socket)
-        print(self.game_summrize()) #todo
         # cleanup and set another game in motion
         player_socket.close()
 
