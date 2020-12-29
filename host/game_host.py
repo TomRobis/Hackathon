@@ -1,6 +1,5 @@
 import threading
 from socket import *
-
 from host import player_handler
 import time
 
@@ -19,6 +18,7 @@ def start_game():
     event = threading.Event()
     p_handler = player_handler.player_handler()
     future = time.time() + 10
+    player_threads = []
     while time.time() < future:  # time out - 10 seconds
         try:
             server_socket.settimeout(future - time.time())
@@ -26,10 +26,12 @@ def start_game():
             # player handler manages the game for the game host - assigns teams to groups and supervises the game
             t = threading.Thread(target=p_handler.handle_client, args=(connectionSocket, event))
             t.start()
+            player_threads.append(t)
         except OSError:
             break
-    event.set() # when timeout is reached, assignment to group has ended - p_handler can start the game
+    event.set()  # when timeout is reached, assignment to group has ended - p_handler can start the game
     # game over, cleanup
     event.clear()
     server_socket.close()
-    t.join()
+    for player_thread in player_threads:
+        player_thread.join()

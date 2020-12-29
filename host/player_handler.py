@@ -1,3 +1,4 @@
+import socket
 import time
 from threading import Lock
 
@@ -20,17 +21,24 @@ class player_handler:
         event.wait()  # every player waits for 10 seconds to end to start the game, determined by game_host.
         self.play_game(player_socket, team_name)  # all players start to type in characters for 10 secs.
         # we count the scores and determine the winner and then update the players.
-        player_socket.send(self.game_summrize().encode())
+        try:
+            player_socket.send(self.game_summrize().encode())
+        except ConnectionResetError:
+            return
         # cleanup and set another game in motion
         player_socket.close()
 
     def play_game(self, player_socket, team_name):
-        player_socket.send(self.welcome_message().encode())
+        try:
+            player_socket.send(self.welcome_message().encode())
+        except ConnectionResetError:
+            return
         future = time.time() + 10
         while time.time() < future:  # time out
             try:
                 player_socket.settimeout(future - time.time())
                 key = player_socket.recv(1024).decode()
+                # key = raw_input(player_socket.recv(1024))
                 if key != "":
                     if team_name in self.group_1:
                         self.mutex_group1.acquire()
@@ -40,9 +48,14 @@ class player_handler:
                         self.mutex_group2.acquire()
                         self.char_counter_group2 += 1
                         self.mutex_group2.release()
-            except OSError:  # timeout error recieving socket
+            except OSError:  # timeout
                 pass
+                # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+                # message = template.format(type(ex).__name__, ex.args)
+                # print(message)
+
             except AttributeError:  # invalid character has been entered.
+                # or UnicodeDecodeError:
                 continue
 
     def room_assignment(self, team_name):
@@ -56,10 +69,10 @@ class player_handler:
         message = "Welcome to Keyboard Spamming Battle Royale.\n"
         message += "Group 1:\n==\n"
         for g in self.group_1:
-            message += g + "\n"
+            message += g
         message += "Group 2:\n==\n"
         for g in self.group_2:
-            message += g + "\n"
+            message += g
         message += "Start pressing keys on your keyboard as fast as you can!!"
         return message
 
@@ -69,9 +82,9 @@ class player_handler:
         if self.char_counter_group1 > self.char_counter_group2:
             to_send += "Group 1 wins!\n\nCongratulations to the winners:\n==\n"
             for team in self.group_1:
-                to_send += team + "\n"
+                to_send += team
         else:
             to_send += "Group 2 wins!\n\nCongratulations to the winners:\n==\n"
             for team in self.group_2:
-                to_send += team + "\n"
+                to_send += team
         return to_send

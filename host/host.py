@@ -1,7 +1,11 @@
 from threading import Thread
 
+from pip._vendor.colorama import init
+
 import host.room_advertising, host.game_host
 import socket
+
+import pretty_print
 
 
 def run_host():
@@ -13,8 +17,8 @@ def run_host():
         t1.start()
         t2.start()
         t1.join()
-        t2.join()
-        print("Game over, sending out offer requests...")
+        # t2.join()
+        print(f"{pretty_print.pretty_print.WARNING}Game over, sending out offer requests...")
 
 
 

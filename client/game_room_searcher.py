@@ -1,6 +1,7 @@
 import struct
 from socket import *
 
+from pip._vendor.colorama import init
 from termcolor import colored
 
 
