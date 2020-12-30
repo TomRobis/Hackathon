@@ -7,6 +7,7 @@ from socket import *
 from pip._vendor.colorama import init
 from termcolor import colored
 
+from client.booli_is_back import booli_is_back
 
 
 def play_game(server_addr):
@@ -37,25 +38,25 @@ def register_team_to_group(client_socket):
 
 
 def send_chars(client_socket):
-    end_game = False
-    t1 = threading.Thread(target=listen_and_send,args=(client_socket,end_game,))
+    back_again = booli_is_back()  # tell a friend
+    t1 = threading.Thread(target=listen_and_send, args=(client_socket, back_again,))
     t1.start()
     try:
         end_game_msg = client_socket.recv(1024)
-        end_game = True
+        back_again.end_game()  # na na na
         # print(t1.is_alive())
     except ConnectionResetError:
-        print(colored('Damn server hung up on us!','blue'))
+        print(colored('Damn server hung up on us!', 'blue'))
         return
     print(end_game_msg.decode())
-def listen_and_send(client_socket,end_game):
-    while(not end_game):
+
+
+def listen_and_send(client_socket, game_status):
+    while (not game_status.is_game_over()):  # guess who's back
+        time.sleep(0.1)  # pc is screaming
         if msvcrt.kbhit():
             c = msvcrt.getch()
             try:
                 client_socket.send(c)
             except OSError:
-                sys.exit() #
-
-
-
+                sys.exit()  #
