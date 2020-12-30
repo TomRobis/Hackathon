@@ -45,7 +45,7 @@ def send_chars(client_socket):
     try:
         end_game_msg = client_socket.recv(1024)
         end_game_flag.end_game()
-        print(t1.isAlive())
+        # print(t1.isAlive())
     except ConnectionResetError:
         print(colored('Damn server hung up on us!', 'blue'))
         return
