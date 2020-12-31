@@ -3,6 +3,8 @@ import sys
 import time
 from threading import Lock
 
+from termcolor import colored
+
 
 class player_handler:
 
@@ -28,7 +30,7 @@ class player_handler:
 
     def play_game(self, player_socket, team_name):
         self.send_msg_to_client(self.welcome_message(), player_socket)
-        print('the client has started the game!')  # ********************
+        print(colored('the client has started the game!',"cyan"))
         future = time.time() + 10
         while time.time() < future:  # time out
             try:
@@ -43,14 +45,10 @@ class player_handler:
                         self.mutex_group2.acquire()
                         self.char_counter_group2 += 1
                         self.mutex_group2.release()
-            except OSError:  # timeout
+            except OSError:
                 pass
-                # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-                # message = template.format(type(ex).__name__, ex.args)
-                # print(message)
 
             except AttributeError:  # invalid character has been entered.
-                # or UnicodeDecodeError:
                 continue
 
     def room_assignment(self, team_name):

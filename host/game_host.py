@@ -1,15 +1,15 @@
 import threading
 from socket import *
 
+from termcolor import colored
+
 import configuration
 from host import player_handler
 import time
-from scapy.arch import get_if_addr
 
 
 def setup_game_host():
-    # actual_ip_address = get_if_addr()
-    serverPort = 2112
+    serverPort = configuration.tcp_port
     serverSocket = socket(AF_INET, SOCK_STREAM)
     serverSocket.bind(('', serverPort))
     serverSocket.listen(1)
@@ -29,7 +29,7 @@ def start_game():
             connectionSocket, addr = server_socket.accept()
             # player handler manages the game for the game host - assigns teams to groups and supervises the game
             t = threading.Thread(target=p_handler.handle_client, args=(connectionSocket, event))
-            print('a client has been received! hurray!')  # *******************
+            print(colored('a client has been received! hurray!',"magenta"))
             t.start()
             player_threads.append(t)
         except OSError:

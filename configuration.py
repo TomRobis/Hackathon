@@ -5,4 +5,4 @@ broadcast_addr = "255.255.255.255"
 broadcast_port = 13117
 wait_time = 10
 tcp_port = 2112
-
+team_name = 'RedHatYossi\n'
