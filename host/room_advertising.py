@@ -22,8 +22,8 @@ def make_msg():
     """
     the message broadcast to all potential game players is packed using a specific pre - instructed
     format, consisting of three fields:
-    1. magic cookie identifier - pre - determined with players catpuring the broadcast
-    2. message type - pre - determined with players catpuring the broadcast
+    1. magic cookie identifier - pre - determined with players that capture the broadcast
+    2. message type - pre - determined with players that capture the broadcast
     3. TCP_port - the port the game host is listening to
     :return: struct obj - said message
     """
@@ -51,7 +51,7 @@ def send_game_host_ip(msg, room_broadcaster_socket):
 def broadcast_game_server_ip():
     """
     the host establishes a udp socket that broadcasts the game host's tcp server's port.
-    potential players decypher the message and connect to it.
+    potential players decipher the message and connect to it.
     """
     room_broadcaster_socket = setup_udp_room_broadcaster()
     msg = make_msg()  # wrap the message with a magic cookie identifier and certain message type

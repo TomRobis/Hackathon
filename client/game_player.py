@@ -1,10 +1,11 @@
-import threading
 from socket import *
 from termcolor import colored
-
+from client.keyboards import listener_keyboard
+import threading
 import configuration
-from client.keyboards import listener_keyboard, msvcrt_keyboard
-from client.booli_is_back import booli_is_back
+
+# from client.booli_is_back import booli_is_back
+# from client.keyboards import msvcrt_keyboard
 
 
 def play_game(server_addr):
@@ -86,21 +87,22 @@ def send_chars(client_socket):
 
 
 # is currently not in use.
-def send_chars_virtual_keyboard(client_socket):
-    """
-    the client has started the game!
-    they are required to send capture keyboard presses made by the user and send them to the server.
-    the server, in turn, documents the presses sent to it to the group which was assigned to the client.
-    once the game is done, a message is sent to the client that announces the winners.
-    :param client_socket: the socket on the client's side that is already connected to the server.
-    """
-    end_game_flag = booli_is_back()
-    t1 = threading.Thread(target=msvcrt_keyboard.listen_and_send, args=(client_socket, end_game_flag,))
-    t1.start()
-    try:
-        end_game_msg = client_socket.recv(configuration.standard_buffer_size)
-        end_game_flag.end_game()
-    except ConnectionResetError:
-        print(colored('Damn server hung up on us!', 'red'))
-        return
-    print(colored(end_game_msg.decode(), "cyan"))
+
+# def send_chars_virtual_keyboard(client_socket):
+#     """
+#     the client has started the game!
+#     they are required to send capture keyboard presses made by the user and send them to the server.
+#     the server, in turn, documents the presses sent to it to the group which was assigned to the client.
+#     once the game is done, a message is sent to the client that announces the winners.
+#     :param client_socket: the socket on the client's side that is already connected to the server.
+#     """
+#     end_game_flag = booli_is_back()
+#     t1 = threading.Thread(target=msvcrt_keyboard.listen_and_send, args=(client_socket, end_game_flag,))
+#     t1.start()
+#     try:
+#         end_game_msg = client_socket.recv(configuration.standard_buffer_size)
+#         end_game_flag.end_game()
+#     except ConnectionResetError:
+#         print(colored('Damn server hung up on us!', 'red'))
+#         return
+#     print(colored(end_game_msg.decode(), "cyan"))

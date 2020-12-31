@@ -1,11 +1,10 @@
 
-'''
-    this class represents a boolean variable.
-    it is used specifically as stoppage for the keyboard's listener.
-'''
 
 class booli_is_back:
-
+    """
+        this class represents a boolean variable.
+        it is used specifically as stoppage for the keyboard's listener.
+    """
     def __init__(self):
 
         self.game_status = False
