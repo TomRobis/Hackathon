@@ -27,7 +27,8 @@ class player_handler:
         player_socket.close()
 
     def play_game(self, player_socket, team_name):
-        self.send_msg_to_client(self.welcome_message(),player_socket)
+        self.send_msg_to_client(self.welcome_message(), player_socket)
+        print('the client has started the game!')  # ********************
         future = time.time() + 10
         while time.time() < future:  # time out
             try:

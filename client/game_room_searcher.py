@@ -4,21 +4,25 @@ from socket import *
 from pip._vendor.colorama import init
 from termcolor import colored
 
+import configuration
+
 
 def set_udp_room_searcher():
-    listener_port = 13117
+    listener_port = configuration.broadcast_port
     listener_udp_socket = socket(AF_INET, SOCK_DGRAM)
     listener_udp_socket.bind(('', listener_port))
     return listener_udp_socket
 
 
 def validate_and_decode_message(message):
-    encoded_msg = struct.unpack('!III', message)  # unwrap to cookie, message type and data
+    encoded_msg = struct.unpack('>IbH', message)  # unwrap to cookie, message type and data - total of 7 bytes
     decoded_message = [hex(encoded_msg[0]), hex(encoded_msg[1]), encoded_msg[2]]  # decode cookie and msg type
     if str(decoded_message[0]) != '0xfeedbeef':  # magic cookie identifier
-        raise ValueError("message doesn't start with magic cookie identifier. your mama is stupid.")  # todo change
+        raise ValueError("message doesn't start with magic cookie identifier. your mama is stupid.")
     elif str(decoded_message[1]) != '0x2':  # message identifier
-        raise ValueError("message type not supported. your mama is stupid.")  # todo change
+        raise ValueError("message type not supported. your mama is stupid.")
+    elif 0 > decoded_message[2] or decoded_message[2] > 65535:
+        raise ValueError("port number isn't valid. your mama is stupid")
     return int(decoded_message[2])  # data of message, port of the host's tcp server
 
 
@@ -27,7 +31,7 @@ def connect_to_game_room():
     print(colored("Client started, listening for offer requests...", "yellow"))
 
     # player receives ip of host and port of tcp server set up by host
-    message, ip_port_tup = listener_udp_socket.recvfrom(1024)
+    message, ip_port_tup = listener_udp_socket.recvfrom(7)
 
     #  message should be decoded and checked for correctness
     port_of_host_tcp_server = validate_and_decode_message(message)

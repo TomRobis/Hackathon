@@ -9,7 +9,7 @@ def listen_and_send(player_socket,game_status):
                 player_socket.send(c)
         except ConnectionResetError:
             print('server hung up on us')
-
+    print('ended listening')
 
 
 

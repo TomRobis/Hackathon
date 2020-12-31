@@ -1,19 +1,18 @@
-import msvcrt
-import sys
 import threading
-import time
 from socket import *
-
-from pip._vendor.colorama import init
 from termcolor import colored
-
 from client import virtual_keyboard
 from client.booli_is_back import booli_is_back
 
 
 def play_game(server_addr):
-    client_socket = connect_with_server(server_addr)
+    try:
+        client_socket = connect_with_server(server_addr)
+    except ConnectionRefusedError:
+        print("Damn server doesn't let us in!")
+        return
     if register_team_to_group(client_socket):
+        # pass
         send_chars(client_socket)
     client_socket.close()  # game over
 
@@ -40,12 +39,11 @@ def register_team_to_group(client_socket):
 
 def send_chars(client_socket):
     end_game_flag = booli_is_back()
-    t1 = threading.Thread(target=virtual_keyboard.listen_and_send, args=(client_socket,end_game_flag,))
+    t1 = threading.Thread(target=virtual_keyboard.listen_and_send, args=(client_socket, end_game_flag,))
     t1.start()
     try:
         end_game_msg = client_socket.recv(1024)
         end_game_flag.end_game()
-        # print(t1.isAlive())
     except ConnectionResetError:
         print(colored('Damn server hung up on us!', 'blue'))
         return
